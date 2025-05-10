@@ -36,30 +36,30 @@ class Geometry:
             
         elif self.n_holes == 1:
             inside_big_circle = ((xs**2 + ys**2) <= 5**2)
-            # one hole at the origin of radius 1"
-            outside_hole = ((xs**2 + ys**2) > 1)
+            # one hole at the origin of radius 3.5"
+            outside_hole = ((xs**2 + ys**2) > 3.5**2)
             # * = logical AND
             return inside_big_circle * outside_hole
         
         elif self.n_holes == 2:
             inside_big_circle = ((xs**2 + ys**2) <= 5**2)
-            # first hole with center at (2.5, 0) of radius 1
-            outside_right_hole = (((xs-2.5)**2 + ys**2) > 1)
-            # second hole with center at (-2.5, 0) of radius 1
-            outside_left_hole = (((xs+2.5)**2 + ys**2) > 1)
+            # first hole with center at (2.5, 0) of radius 2
+            outside_right_hole = (((xs-2.5)**2 + ys**2) > 2**2)
+            # second hole with center at (-2.5, 0) of radius 2
+            outside_left_hole = (((xs+2.5)**2 + ys**2) > 2**2)
             # * = logical AND
             return inside_big_circle * outside_right_hole * outside_left_hole
         
         elif self.n_holes == 3:
             inside_big_circle = ((xs**2 + ys**2) <= 5**2)
-            # zeroth hole with center at (2.5, 0) of radius 1
-            outside_zeroth_hole = (((xs-2.5)**2 + ys**2) > 1)
-            # first hole at center = 2.5*first_root_of_unity of radius 1
+            # zeroth hole with center at (2.5, 0) of radius 2
+            outside_zeroth_hole = (((xs-2.5)**2 + ys**2) > 2**2)
+            # first hole at center = 2.5*first_root_of_unity of radius 2
             xc1, yc1 = 2.5*np.cos(2*np.pi/3), 2.5*np.sin(2*np.pi/3)
-            outside_first_hole = (((xs-xc1)**2 + (ys-yc1)**2) > 1)
-            # second hole at center = 2.5*second_root_of_unity of radius 1
+            outside_first_hole = (((xs-xc1)**2 + (ys-yc1)**2) > 2**2)
+            # second hole at center = 2.5*second_root_of_unity of radius 2
             xc2, yc2 = 2.5*np.cos(2*2*np.pi/3), 2.5*np.sin(2*2*np.pi/3)
-            outside_second_hole = (((xs-xc2)**2 + (ys-yc2)**2) > 1)
+            outside_second_hole = (((xs-xc2)**2 + (ys-yc2)**2) > 2**2)
             # * = logical AND
             return inside_big_circle * outside_zeroth_hole * outside_first_hole * outside_second_hole
             
@@ -101,14 +101,14 @@ class Geometry:
     
 
 class PlaceCellsModel:
-    def __init__(self, n_holes, move_time_frac=0.8):
+    def __init__(self, n_holes, move_time_frac=0.8, n_cells=256, cell_radius=0.05, sigma_activation=0.05):
         self.geometry = Geometry(n_holes)
         self.move_time_frac = move_time_frac
         
         # TODO: add the arguments of this to the above method
-        self.cells = self.geometry.sample_Pois(n_points = 256, radius = 0.05)
+        self.cells = self.geometry.sample_Pois(n_points = n_cells, radius = cell_radius)
         self.n_cells = self.cells.shape[0]
-        self.sigma_activation = 0.05
+        self.sigma_activation = sigma_activation
         self.sigma_noise = 0.01
 
     def sample_gaussian_walk(self, n_steps, sigma):
@@ -194,7 +194,7 @@ class PlaceCellsModel:
         traj = self.sample_Levy_walk(n_steps=n_steps, min_step=0.1, max_step=3., exponent=1.5)
 
         cells = self.cells 
-        sigma_a = 1 #2*self.sigma_activation
+        sigma_a = self.sigma_activation
         
         d = pairwise_distances(cells, traj)
         
