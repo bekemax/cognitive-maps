@@ -13,3 +13,7 @@ An artificial model of hippocampal [place cell neurons](https://en.wikipedia.org
 [UMAP](https://umap-learn.readthedocs.io/en/latest/) reconstructions:
 
 ![image info](/figs/umaps.png)
+
+[Diffusion maps](https://en.wikipedia.org/wiki/Diffusion_map) reconstructions:
+
+![image info](/figs/diffmaps.png)
